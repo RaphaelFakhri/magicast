@@ -35,6 +35,16 @@ function canMergeSpecifier(
   ) {
     return false;
   }
+  // `import type A, { B } from "a"` is invalid (TS1363)
+  if (
+    importKind === "type"
+    && declaration.specifiers.some(
+      s => (s.type === "ImportDefaultSpecifier")
+        !== (specifier.type === "ImportDefaultSpecifier"),
+    )
+  ) {
+    return false;
+  }
   // An import declaration can only have one default specifier
   if (specifier.type === "ImportDefaultSpecifier") {
     return !declaration.specifiers.some(
